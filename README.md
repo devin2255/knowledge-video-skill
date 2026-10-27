@@ -74,8 +74,8 @@ const push = 1 + 0.05 * at(t, 0, 18);  // 18 秒推 5%，看不出来但画面�
 
 ```powershell
 # 1. 装 skill（复制到你的 skills 目录）
-git clone https://github.com/<you>/knowledge-video-skill.git
-Copy-Item .\knowledge-video-skill "$env:USERPROFILE\.claude\skills\knowledge-video" -Recurse
+git clone https://github.com/devin2255/knowledge-video-skill.git
+Copy-Item .\knowledge-video-skill\* "$env:USERPROFILE\.claude\skills\knowledge-video" -Recurse
 
 # 2. 建一个 Remotion 项目
 npm create video@latest my-video
@@ -167,4 +167,5 @@ Windows 有一个致命坑：系统会清理 `%TEMP%`，导致渲染中途 `writ
 ## License
 
 MIT
+
 
