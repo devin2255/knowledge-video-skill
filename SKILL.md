@@ -1,11 +1,32 @@
 ---
 name: knowledge-video
-description: Use when the user wants to turn a topic or rough idea into a finished knowledge video (知识视频 / 科普短片 / 解说视频 / 短视频), or asks for 选题评估、视频脚本、分镜、封面、发布标题. Produces research, script, storyboard, a Remotion composition, an event-synced score, covers in 16:9 / 9:16 / 3:4, and per-platform titles (抖音 / B站 / 小红书).
+description: |
+  把一句话题变成一条可发布的知识短片：选题评估 → 查证研究 → 逐句文案 → 161 秒结构 → Remotion 场景 →
+  事件化配乐 → 三尺寸封面 → 三平台标题。
+  无旁白、字幕驱动、零硬切。
+  触发场景：用户说「做一期关于 X 的视频」「这个选题能做吗」「视频脚本」「分镜」「封面」「发布标题」
+  「知识视频」「科普短片」「解说视频」「短视频文案」「抖音/B站/小红书文案」，或给一个话题要成片。
+license: MIT
+metadata:
+  domain: video-production
+  runtime: remotion
+compatibility: Node 18+ / Remotion 4.x / Python 3.10+ (numpy) / FFmpeg (libx264+AAC). Windows 需把 TEMP 指向项目内，见 references/setup.md。
+allowed-tools: Bash, PowerShell, Read, Write, Edit, Glob, Grep
 ---
 
 # 知识视频流水线
 
 从一句话题，到一条能发的片子。无旁白，字幕驱动，画面自己说话。
+
+## 不适用
+
+这套流程是给**科学 × 个人处境 × 反直觉**这个赛道做的。以下情况不要硬套：
+
+- **纯视觉展示片**（品牌片、产品片、风格样片）——不需要论证结构。
+- **需要真人出镜或写实镜头**——本流程全部是程序化图形。
+- **长视频**（>5 分钟）——161 秒的节奏公式不成立。
+- **强时效新闻**——查证和引用需要时间，赶不上。
+- **没有可查证来源的选题**——宁可换题，不要编。
 
 ## 产物清单
 
@@ -32,7 +53,7 @@ description: Use when the user wants to turn a topic or rough idea into a finish
 音量     平均 −20 至 −22 dBFS，峰值 ≤ −4
 ```
 
-## 七步流水线
+## 九步流水线
 
 ### 第 1 步 · 选题判断
 
@@ -100,6 +121,25 @@ description: Use when the user wants to turn a topic or rough idea into a finish
 - 三个尺寸一次出：16:9（B站）、9:16（抖音）、3:4（小红书）。
 - 标题按平台分三套，不要一份改格式。
 
+
+### 第 8 步 · 自检（机器）
+
+```powershell
+node scripts/qa.mjs out/film.mp4 161 30
+```
+
+检查编码 / 像素格式 / 分辨率 / 帧率 / 帧数 / 时长 / 音轨 / 响度 / 真峰值 / 黑场。
+**任何一项不过，不要送去评审。**
+
+### 第 9 步 · 独立评审（另一双眼睛）
+
+自评会骗自己。成片交给一个**没有参与制作**的会话，按 `references/review.md` 里的评审判据打分，再按意见改一轮。
+
+评分维度：hook / script / structure / visual / sound / accuracy / publishability。
+
+经验值：第一版自评通常 7，独立评审往往 5.5–6。差在三处——
+第一帧还是标题卡不是画面、机制段全是抽象名词、字幕在小屏读不清。
+
 ## 反模式（都是踩过的坑）
 
 | 别做 | 为什么 |
@@ -137,8 +177,22 @@ description: Use when the user wants to turn a topic or rough idea into a finish
 - `score_episode.py` —— 事件化配乐（静音、坠落、刻度、末音）
 - `synth.py` —— 合成器库（正弦、噪声、滤波器、混响、各类音色）
 - `grain.png` —— 胶片颗粒
+- `BlackHoleCSS.tsx` —— 引力透镜黑洞（CSS 3D，非 SVG），可直接改用任意天体
 
 复制到新项目后改数据，不要从零写。
+
+## 参考文档
+
+| 文件 | 内容 |
+|---|---|
+| `references/writing.md` | 文案规则，八组正反对照 |
+| `references/structure.md` | 161 秒六幕时间轴 |
+| `references/visuals.md` | 五条摄影原则，场景组件清单 |
+| `references/sound.md` | 事件化配乐，静音手法 |
+| `references/publishing.md` | 三尺寸封面，三平台标题 |
+| `references/pipeline.md` | **确定性契约、单一时序源、每段闭环** |
+| `references/review.md` | **独立评审判据 + 修改提示词** |
+| `references/setup.md` | 环境与命令，Windows 的 TEMP 坑 |
 
 ## 脚手架
 
@@ -151,4 +205,5 @@ description: Use when the user wants to turn a topic or rough idea into a finish
 之后只剩三件手工活：改字幕、改封面文案、注册 Composition。
 
 环境搭建与渲染命令见 `references/setup.md`，**尤其是 Windows 的 TEMP 坑**。
+
 
